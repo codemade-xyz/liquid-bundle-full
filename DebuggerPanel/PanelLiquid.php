@@ -88,18 +88,43 @@ class PanelLiquid
             'class' => ''
         ];*/
 
-        /*$this->paramets['database']['error'] = array_diff( $this->paramets['database']['error'], ['00000','1054', ''] );
 
-        if (count($this->paramets['database']['error']) > 0)
-        {
-            $this->paramets['database']['class'] = ' sf-toolbar-status-red';
-        }*/
 
         if (class_exists('\Doctrine\DBAL\Logging\DebugStack')) {
-            $stack = new \Doctrine\DBAL\Logging\DebugStack();
-            //var_dump($stack);
-            $this->paramets['database']['log'] = $stack->queries;
-            $this->paramets['database']['time'] = 0;
+
+            $error_log = $this->kernel->getContainer()->get('doctrine')->getEntityManager()
+                ->getConnection()->errorInfo();
+
+
+            $doctrine = $this->kernel->getContainer()->get('doctrine');
+            $doctrineConnection = $doctrine->getConnection();
+            $stack = $doctrineConnection->getConfiguration()->getSQLLogger();
+
+            $log = [];
+
+            foreach ($this->obj2array($stack)['___SOURCE_KEYS_'] as $key => $item) {
+                $log = isset($item[1]) ? $item[1] : [];
+            }
+
+            $all_time = 0;
+            if (!empty($log->queries)) {
+                foreach ($log->queries as $item) {
+                    $all_time = $all_time+$item['executionMS'];
+                }
+                $this->paramets['database']['log'] = $log->queries;
+            }
+            $all_time = $all_time*1000;
+
+
+            $this->paramets['database']['time'] = $this->getTime($all_time);
+            $this->paramets['database']['error'] = $error_log;
+
+            $this->paramets['database']['error'] = array_diff( $this->paramets['database']['error'], ['00000','1054', ''] );
+
+            if (count($this->paramets['database']['error']) > 0)
+            {
+                $this->paramets['database']['class'] = ' sf-toolbar-status-red';
+            }
 
         }
 
@@ -139,5 +164,19 @@ class PanelLiquid
 
     public function getTime($time) {
         return number_format($time, 0, '.', '');
+    }
+
+    public function obj2array ( &$Instance ) {
+        $clone = (array) $Instance;
+        $rtn = array ();
+        $rtn['___SOURCE_KEYS_'] = $clone;
+
+        while ( list ($key, $value) = each ($clone) ) {
+            $aux = explode ("\0", $key);
+            $newkey = $aux[count($aux)-1];
+            $rtn[$newkey] = &$rtn['___SOURCE_KEYS_'][$key];
+        }
+
+        return $rtn;
     }
 }

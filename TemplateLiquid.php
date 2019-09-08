@@ -18,6 +18,7 @@ class TemplateLiquid
     private $settings;
     private $start_time;
 
+
     public function __construct(KernelInterface $kernel, array $settings = [])
     {
         $this->start_time = microtime(true);
@@ -25,6 +26,8 @@ class TemplateLiquid
         $this->kernel = $kernel;
         $this->paths = isset($this->settings['paths']) ? $this->settings['paths'] : [];
         $this->defaultPath = isset($this->settings['default_path']) ? $this->settings['default_path']: '';
+
+
     }
 
 
@@ -165,8 +168,6 @@ class TemplateLiquid
         $this->getTemplateFile($view);
         return true;
     }
-
-
 
 
 }

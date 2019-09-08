@@ -1,4 +1,4 @@
-# Liquid template engine for PHP [![Build Status](https://travis-ci.org/harrydeluxe/php-liquid.svg?branch=develop)](https://travis-ci.org/harrydeluxe/php-liquid)
+# Sumfony Liquid Bundle Full template engine for PHP [![Build Status](https://travis-ci.org/harrydeluxe/php-liquid.svg?branch=develop)](https://travis-ci.org/harrydeluxe/php-liquid)
 
 Liquid is a PHP port of the [Liquid template engine for Ruby](https://github.com/Shopify/liquid), which was written by Tobias Lutke. Although there are many other templating engines for PHP, including Smarty (from which Liquid was partially inspired), Liquid had some advantages that made porting worthwhile:
 
@@ -21,7 +21,7 @@ Liquid was written to meet three templating library requirements: good performan
 
 You can install this lib via [composer](https://getcomposer.org/):
 
-    composer create-project liquid/liquid
+    composer require codemade-xyz/liquid-bundle-full
 
 ## Example template
 
@@ -43,18 +43,23 @@ You can install this lib via [composer](https://getcomposer.org/):
 
 ## How to use Liquid
 
-The main class is `Liquid::Template` class. There are two separate stages of working with Liquid templates: parsing and rendering. Here is a simple example:
+Recommended Structure
 
-    use Liquid\Template;
+    project/
+    | ...
+    ├─ src/
+    │  └─ ...
+    ├─ templates/         # main path for templates
+    │  └─ Admin/          # path Admin templates
+    │     ├─ sections/    # path for sections use tag {% section "name" %}
+    |     ├─ locales/     # path for other locales use filter {{ "document.title" | t }}
+    |        ├─ en.json
+    |        └─ ru.json
+    |     └─ templates/   # main path for templates 
+    └ ...
+    
 
-    $template = new Template();
-    $template->parse("Hello, {{ name }}!");
-    echo $template->render(array('name' => 'World');
 
-	// Will echo
-	// Hello, World!
-
-To find more examples have a look at the `examples` directory or at the original Ruby implementation repository's [wiki page](https://github.com/Shopify/liquid/wiki).
 
 ## Requirements
 

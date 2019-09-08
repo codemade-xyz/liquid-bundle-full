@@ -658,6 +658,45 @@ class StandardFilters
     protected static function _t_getKey($input) {
         return '['.str_replace('.', '][', $input).']';
     }
+
+    public static function get_build($name, $ext)
+    {
+        $html = '';
+        $content = [];
+
+        $file = Liquid::$project_dir.'/public/build/entrypoints.json';
+        $app = !empty(Liquid::$project_env) ? Liquid::$project_env : 'prod';
+
+        if (file_exists($file)) {
+            $content_array = json_decode(file_get_contents($file), true);
+            $content = isset($content_array['entrypoints'][$name][$ext]) ? $content_array['entrypoints'][$name][$ext] : [];
+        }
+
+        if ($content) {
+            foreach ($content as $item)
+            {
+                if ($app == 'dev') {
+                    $item .= '?'.time();
+                }
+                if ($ext == 'js') {
+                    $html .= self::script_tag($item);
+                }
+                if ($ext == 'css') {
+                    $html .= self::stylesheet_tag($item);
+                }
+            }
+        }
+
+        return $html;
+    }
+
+    public static function stylesheet_tag($url) {
+        return '<link href="'.$url.'" rel="stylesheet">';
+    }
+
+    public static function script_tag($url) {
+        return '<script src="'.$url.'" type="text/javascript"></script>';
+    }
 	
 	/**
 	 * Use overloading to get around reserved php words - in this case 'default'

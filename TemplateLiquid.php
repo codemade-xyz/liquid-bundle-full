@@ -47,6 +47,8 @@ class TemplateLiquid
         Liquid::set('INCLUDE_PREFIX', $this->settings['include_prefix']);
         Liquid::setTemplate($template_name);
         Liquid::setView($view);
+        Liquid::$project_dir = $this->kernel->getProjectDir();
+        Liquid::$project_env = $this->kernel->getEnvironment();
 
         $request = $this->kernel->getContainer()->get('request_stack')->getCurrentRequest();
 

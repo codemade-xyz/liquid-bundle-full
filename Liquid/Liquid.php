@@ -77,6 +77,11 @@ class Liquid
 	);
 
     // locale from request
+    public static $project_dir;
+    // locale from request
+    public static $project_env;
+
+    // locale from request
     protected static $locale;
 
     // locale array from path locales
